@@ -118,7 +118,9 @@ export class AppModule implements NestModule {
 
         // Health checks and public endpoints
         { path: "health", method: RequestMethod.GET },
+        { path: "health", method: RequestMethod.HEAD },
         { path: "", method: RequestMethod.GET }, // Root endpoint
+        { path: "", method: RequestMethod.HEAD }, // Root endpoint health probes
 
         // Public storage-items routes
         { path: "storage-items/ordered", method: RequestMethod.GET },
