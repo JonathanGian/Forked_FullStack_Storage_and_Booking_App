@@ -6,6 +6,7 @@ import { selectActiveRoleContext } from "@/store/slices/rolesSlice";
 import { refreshSupabaseSession } from "@/store/utils/refreshSupabaseSession";
 import { toast } from "sonner";
 import { t } from "@/translations";
+import { getApiBaseUrl } from "./api-url";
 
 // Cache the token to avoid unnecessary async calls
 let cachedToken: string | null = null;
@@ -42,16 +43,7 @@ export function clearCachedAuthToken() {
   cachedToken = null;
 }
 
-// Get API URL from runtime config with fallback to development URL
-const apiUrl = import.meta.env.VITE_API_URL as string;
-const baseURL = apiUrl
-  ? // If it starts with "/" (relative path), use as-is for nginx proxy
-    // If it starts with "http", use as-is
-    // Otherwise, assume it needs https protocol
-    apiUrl.startsWith("/") || apiUrl.startsWith("http")
-    ? apiUrl
-    : `https://${apiUrl}`
-  : "http://localhost:3000";
+const baseURL = getApiBaseUrl();
 
 export const api = axios.create({
   baseURL,

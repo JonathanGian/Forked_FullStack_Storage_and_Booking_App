@@ -1,6 +1,7 @@
 import { supabase } from "@/config/supabase";
 import { User, Session } from "@supabase/supabase-js";
 import { api, clearCachedAuthToken } from "../axios";
+import { ensureBackendAwake, getApiBaseUrl } from "../api-url";
 
 export interface UserProfileData {
   email: string;
@@ -39,6 +40,8 @@ export class AuthService {
     userInput?: { full_name?: string; phone?: string },
   ): Promise<SignUpResult> {
     try {
+      await ensureBackendAwake();
+
       // Extract user data based on signup method
       const profileData = this.extractUserProfileData(user, signupMethod);
 
@@ -69,7 +72,7 @@ export class AuthService {
       };
 
       // Use the configured API URL from environment
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const apiUrl = getApiBaseUrl();
 
       // Call backend API to setup user
       const response = await fetch(`${apiUrl}/user-setup/setup`, {
@@ -196,6 +199,7 @@ export class AuthService {
    */
   static async checkUserSetupStatus(userId: string): Promise<UserSetupStatus> {
     try {
+      await ensureBackendAwake();
       const response = await api.post<UserSetupStatus>(
         "/user-setup/check-status",
         { userId },
