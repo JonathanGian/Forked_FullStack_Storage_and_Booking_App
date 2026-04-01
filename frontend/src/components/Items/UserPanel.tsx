@@ -27,6 +27,8 @@ import { buildCategoryTree } from "@/store/utils/format";
 import CategoryTree from "@/components/Items/CategoryTree";
 import { orgLocationsApi } from "@/api/services/organizationLocations";
 import type { OrgLocationWithNames } from "@/types/organizationLocation";
+import { ensureBackendAwake } from "@/api/api-url";
+import { toast } from "sonner";
 
 interface NavigationState {
   preSelectedFilters?: {
@@ -65,6 +67,39 @@ const UserPanel = () => {
     if (organizations.length < 1)
       void dispatch(fetchAllOrganizations({ page: 1, limit: 50 }));
     // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    let isActive = true;
+    let toastId: string | number | undefined;
+
+    const warmupPromise = ensureBackendAwake();
+    const toastTimer = window.setTimeout(() => {
+      if (!isActive) return;
+      toastId = toast.loading(
+        "Backend is waking up. This can take up to a minute on the free host.",
+      );
+    }, 1500);
+
+    void warmupPromise
+      .then(() => {
+        window.clearTimeout(toastTimer);
+        if (!isActive || !toastId) return;
+        toast.success("Backend is ready.", { id: toastId, duration: 2500 });
+      })
+      .catch(() => {
+        window.clearTimeout(toastTimer);
+        if (!isActive || !toastId) return;
+        toast.error("Backend is still starting. Please wait a moment.", {
+          id: toastId,
+        });
+      });
+
+    return () => {
+      isActive = false;
+      window.clearTimeout(toastTimer);
+      if (toastId) toast.dismiss(toastId);
+    };
   }, []);
 
   // Shared expand/collapse state per filter list (max 5 visible by default)
