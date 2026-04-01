@@ -16,7 +16,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 });
 
 // More detailed error logging for authentication failures (development only)
-console.log("dev", import.meta.env.DEV);
 if (import.meta.env.DEV) {
   supabase.auth.onAuthStateChange((event) => {
     if (event === "SIGNED_IN") {
