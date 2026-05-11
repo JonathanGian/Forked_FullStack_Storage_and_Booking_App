@@ -1,12 +1,7 @@
 name: Booking Reminders
 
 on:
-  schedule:
-    # Run twice daily to approximate 09:00 Helsinki across DST
-    # Summer (EEST, UTC+3): 06:00 UTC ≈ 09:00 local
-    # Winter (EET, UTC+2): 07:00 UTC ≈ 09:00 local
-    - cron: '0 6 * * *'
-    - cron: '0 7 * * *'
+  # Automatic reminder runs are paused until CRON_URL/CRON_SECRET are configured.
   workflow_dispatch:
     inputs:
       scope:
