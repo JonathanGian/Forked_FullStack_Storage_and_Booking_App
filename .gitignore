@@ -10,7 +10,8 @@ supabase/.env.local
 supabase/.env.keys
 .env.supabase.local
 !.env.supabase.local.template
-.vscode
+.vscode/extensions.json
+.vscode/settings.json
 
 supabase-project
 supabase-prod
